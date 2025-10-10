@@ -58,7 +58,7 @@ containers = {
     ]
 
     configs = [
-      { file = "/etc/k0s/k0s.yaml", content = file("./configs/k0s.yaml") }
+      { file = "/etc/k0s/k0s.yaml", source = "./configs/k0s.yaml" }
     ]
 
     template_data = {
