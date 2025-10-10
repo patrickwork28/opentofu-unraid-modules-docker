@@ -11,15 +11,17 @@ module "containers" {
     pids_limit = each.value.pids_limit
     cpuset     = try(each.value.template_data.cpuset, "")
 
-    user       = try(each.value.user, null)
-    privileged = each.value.privileged
-    command    = try(each.value.command, [])
-    entrypoint = try(each.value.entrypoint, [])
-    envs       = try(each.value.envs, [])
-    ports      = try(each.value.ports, [])
-    mounts     = try(each.value.mounts, [])
-    labels     = try(each.value.labels, [])
-    devices    = try(each.value.devices, [])
+    user         = try(each.value.user, null)
+    privileged   = each.value.privileged
+    command      = try(each.value.command, [])
+    entrypoint   = try(each.value.entrypoint, [])
+    envs         = try(each.value.envs, [])
+    capabilities = try(each.value.capabilities, null)
+    security_opts = try(each.value.security_opts, [])
+    ports        = try(each.value.ports, [])
+    mounts       = try(each.value.mounts, [])
+    labels       = try(each.value.labels, [])
+    devices      = try(each.value.devices, [])
   }
 }
 

@@ -24,6 +24,16 @@ resource "docker_container" "this" {
     for env in try(var.container_data.envs, []) : "${env.name}=${env.value}"
   ]
 
+  dynamic "capabilities" {
+    for_each = try(var.container_data.capabilities, null) != null ? [var.container_data.capabilities] : []
+    content {
+      add  = try(capabilities.value.add, [])
+      drop = try(capabilities.value.drop, [])
+    }
+  }
+
+  security_opts = try(var.container_data.security_opts, [])
+
   dynamic "ports" {
     for_each = try(var.container_data.ports, [])
     content {

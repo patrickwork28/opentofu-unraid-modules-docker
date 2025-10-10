@@ -17,7 +17,14 @@ variable "container_data" {
       name  = string
       value = string
     })), [])
+    
+    capabilities = optional(object({
+      add  = optional(list(string), [])
+      drop = optional(list(string), [])
+    }), { add = [], drop = [] })
 
+    security_opts = optional(list(string), [])
+    
     ports = optional(list(object({
       host      = number
       container = number
