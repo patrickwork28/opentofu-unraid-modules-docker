@@ -1,5 +1,4 @@
 variable "containers" {
-  description = "Map of container configurations with unique keys for stable resource addressing. Each container includes Docker runtime settings and Unraid template metadata."
   type = map(object({
     name       = string
     hostname   = string
@@ -7,7 +6,7 @@ variable "containers" {
     network    = string
     restart    = string
     pids_limit = number
-    user = optional(string)
+    user       = optional(string)
     privileged = optional(bool, false)
     command    = optional(list(string), [])
     entrypoint = optional(list(string), [])
@@ -26,7 +25,7 @@ variable "containers" {
     mounts = optional(list(object({
       host_path      = string
       container_path = string
-      mode           = string  # "ro" or "rw"
+      mode           = string
     })), [])
 
     labels = optional(list(object({
@@ -41,19 +40,19 @@ variable "containers" {
     })), [])
 
     template_data = object({
-      shell = string
-      repository     = string
-      support        = string
-      project        = string
-      overview       = string
-      category       = string
-      webui          = string
-      template_url   = string
-      icon           = string
-      extra_params   = string
+      shell        = string
+      repository   = string
+      support      = string
+      project      = string
+      overview     = string
+      category     = string
+      webui        = string
+      template_url = string
+      icon         = string
+      extra_params = string
       date_installed = string
-      donate_text    = string
-      donate_link    = string
+      donate_text  = string
+      donate_link  = string
       myip       = optional(string, "")
       postargs   = optional(string, "")
       cpuset     = optional(string, "")
