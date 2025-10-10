@@ -38,12 +38,27 @@ containers = {
       { name = "KC_DB", value = "postgres" }
     ]
 
+    capabilities = {
+      add  = ["NET_ADMIN"]
+      drop = ["MKNOD"]
+    }
+
+    security_opts = [
+      "label=type:container_t",
+      "label=level:s0:c1,c2"
+    ]
+
     ports = [
       { host = 33443, container = 8443, protocol = "tcp" }
     ]
 
     mounts = [
-      { host_path = "/mnt/user/appdata/keycloak/", container_path = "/mnt/certs/", mode = "rw" }
+      { type = "bind", host_path = "/mnt/user/appdata/keycloak/", container_path = "/mnt/certs/", mode = "rw" },
+      { type = "tmpfs", container_path = "/var/tmpfs_data", tmpfs_options = { mode = 0777, size_bytes = 1048576 } }
+    ]
+
+    configs = [
+      { file = "/etc/k0s/k0s.yaml", content = file("./configs/k0s.yaml") }
     ]
 
     template_data = {
