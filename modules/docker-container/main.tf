@@ -47,9 +47,17 @@ resource "docker_container" "this" {
     for_each = try(var.container_data.mounts, [])
     content {
       target    = mounts.value.container_path
-      source    = mounts.value.host_path
-      type      = "bind"
-      read_only = mounts.value.mode == "ro"
+      source    = try(mounts.value.host_path, null)
+      type      = mounts.value.type
+      read_only = try(mounts.value.mode, null) == "ro"
+      
+      dynamic "tmpfs_options" {
+        for_each = mounts.value.type == "tmpfs" && try(mounts.value.tmpfs_options, null) != null ? [mounts.value.tmpfs_options] : []
+        content {
+          mode       = try(tmpfs_options.value.mode, null)
+          size_bytes = try(tmpfs_options.value.size_bytes, null)
+        }
+      }
     }
   }
 
@@ -69,5 +77,18 @@ resource "docker_container" "this" {
       permissions        = devices.value.permissions
     }
   }
+  dynamic "upload" {
+    for_each = try(var.container_data.configs, [])
+    content {
+      file           = upload.value.file
+      content        = try(upload.value.content, null)
+      content_base64 = try(upload.value.content_base64, null)
+      source         = try(upload.value.source, null)
+      source_hash    = try(upload.value.source_hash, null)
+      executable     = try(upload.value.executable, false)
+      permissions    = try(upload.value.permissions, null)
+    }
+  }
+  
   depends_on = [ docker_image.this ]
 }

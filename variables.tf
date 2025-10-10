@@ -30,9 +30,24 @@ variable "containers" {
     })), [])
 
     mounts = optional(list(object({
-      host_path      = string
+      type           = string
+      host_path      = optional(string)
       container_path = string
-      mode           = string
+      mode           = optional(string)
+      tmpfs_options = optional(object({
+        mode       = optional(number)
+        size_bytes = optional(number)
+      }))
+    })), [])
+
+    configs = optional(list(object({
+      file           = string
+      content        = optional(string)
+      content_base64 = optional(string)
+      source         = optional(string)
+      source_hash    = optional(string)
+      executable     = optional(bool, false)
+      permissions    = optional(string)
     })), [])
 
     labels = optional(list(object({
@@ -127,6 +142,14 @@ variable "containers" {
     ])
     error_message = "Mount modes must be either 'ro' (read-only) or 'rw' (read-write)."
   }
+}
+
+variable "config_files" {
+  description = "Map of configuration files with their content"
+  type = map(object({
+    content = string
+  }))
+  default = {}
 }
 
 variable "unraid" {

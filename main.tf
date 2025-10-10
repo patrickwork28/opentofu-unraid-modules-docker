@@ -1,7 +1,7 @@
 module "containers" {
   source = "./modules/docker-container"
   for_each = var.containers
-
+  
   container_data = {
     name       = each.value.name
     hostname   = each.value.hostname
@@ -20,6 +20,7 @@ module "containers" {
     security_opts = try(each.value.security_opts, [])
     ports        = try(each.value.ports, [])
     mounts       = try(each.value.mounts, [])
+    configs      = try(each.value.configs, [])
     labels       = try(each.value.labels, [])
     devices      = try(each.value.devices, [])
   }

@@ -32,9 +32,24 @@ variable "container_data" {
     })), [])
 
     mounts = optional(list(object({
-      host_path      = string
+      type           = string
+      host_path      = optional(string)
       container_path = string
-      mode           = string  # "ro" or "rw"
+      mode           = optional(string)
+      tmpfs_options = optional(object({
+        mode       = optional(number)
+        size_bytes = optional(number)
+      }))
+    })), [])
+
+    configs = optional(list(object({
+      file           = string
+      content        = optional(string)
+      content_base64 = optional(string)
+      source         = optional(string)
+      source_hash    = optional(string)
+      executable     = optional(bool, false)
+      permissions    = optional(string)
     })), [])
 
     labels = optional(list(object({
