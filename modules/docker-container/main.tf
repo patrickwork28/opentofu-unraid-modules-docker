@@ -1,16 +1,12 @@
-data "docker_registry_image" "this" {
-  name = var.container_data.image
-}
-
 resource "docker_image" "this" {
-  name          = data.docker_registry_image.this.name
-  pull_triggers = [data.docker_registry_image.this.sha256_digest]
+  name         = var.container_data.image
+  keep_locally = true
 }
 
 resource "docker_container" "this" {
   name         = var.container_data.name
   hostname     = var.container_data.hostname
-  image        = docker_image.this.name
+  image        = docker_image.this.image_id
   restart      = var.container_data.restart
   network_mode = var.container_data.network
   cpu_set      = var.container_data.cpuset != "" ? var.container_data.cpuset : null
