@@ -61,26 +61,26 @@ variable "containers" {
       permissions    = string
     })), [])
 
-    template_data = object({
-      enable       = optional(bool, true)
-      shell        = string
-      repository   = string
-      support      = string
-      project      = string
-      overview     = string
-      category     = string
-      webui        = string
-      template_url = string
-      icon         = string
-      extra_params = string
-      date_installed = string
-      donate_text  = string
-      donate_link  = string
+    template_data = optional(object({
+      enable       = optional(bool, false)
+      shell        = optional(string, "sh")
+      repository   = optional(string, "")
+      support      = optional(string, "")
+      project      = optional(string, "")
+      overview     = optional(string, "")
+      category     = optional(string, "")
+      webui        = optional(string, "")
+      template_url = optional(string, "")
+      icon         = optional(string, "")
+      extra_params = optional(string, "")
+      date_installed = optional(string, "")
+      donate_text  = optional(string, "")
+      donate_link  = optional(string, "")
       myip       = optional(string, "")
       postargs   = optional(string, "")
       cpuset     = optional(string, "")
       requires   = optional(string, "")
-    })
+    }), {})
   }))
 
   validation {

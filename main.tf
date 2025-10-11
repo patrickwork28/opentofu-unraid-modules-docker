@@ -28,7 +28,10 @@ module "containers" {
 
 module "containers_xml" {
   source = "./modules/unraid-docker-xml"
-  for_each = var.containers
+  for_each = {
+    for key, container in var.containers : key => container
+    if try(container.template_data.enable, false) == true
+  }
 
   enable         = each.value.template_data.enable
 

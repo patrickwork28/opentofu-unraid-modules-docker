@@ -45,7 +45,7 @@ variable "xml_specific_data" {
   description = "XML-specific configuration data for Unraid DockerMan template generation"
   type = object({
     name           = string
-    overview       = string
+    overview       = optional(string, "")
     requires       = optional(string, "")
     support        = optional(string, "")
     project        = optional(string, "")
@@ -56,7 +56,7 @@ variable "xml_specific_data" {
     postargs       = optional(string, "")
     cpuset         = optional(string, "")
     shell          = optional(string, "sh")
-    category       = string
+    category       = optional(string, "")
     template_url   = optional(string, "")
     date_installed = optional(string, "")
     donate_text    = optional(string, "")
