@@ -85,35 +85,35 @@ variable "containers" {
 
   validation {
     condition = alltrue([
-      for key, container in var.containers : can(regex("^[a-z0-9-]+$", key))
+      for key, container in var.container : can(regex("^[a-z0-9-]+$", key))
     ])
     error_message = "Container keys must contain only lowercase letters, numbers, and hyphens."
   }
 
   validation {
     condition = alltrue([
-      for key, container in var.containers : can(regex("^[a-z0-9-]+$", container.name))
+      for key, container in var.container : can(regex("^[a-z0-9-]+$", container.name))
     ])
     error_message = "Container names must contain only lowercase letters, numbers, and hyphens."
   }
 
   validation {
     condition = alltrue([
-      for key, container in var.containers : contains(["no", "on-failure", "always", "unless-stopped"], container.restart)
+      for key, container in var.container : contains(["no", "on-failure", "always", "unless-stopped"], container.restart)
     ])
     error_message = "Restart policy must be one of: no, on-failure, always, unless-stopped."
   }
 
   validation {
     condition = alltrue([
-      for key, container in var.containers : contains(["sh", "bash"], container.template_data.shell)
+      for key, container in var.container : contains(["sh", "bash"], container.template_data.shell)
     ])
     error_message = "Shell must be either 'sh' or 'bash'."
   }
 
   validation {
     condition = alltrue([
-      for key, container in var.containers :
+      for key, container in var.container :
       alltrue([
         for port in try(container.ports, []) :
         contains(["tcp", "udp"], port.protocol)
@@ -124,10 +124,10 @@ variable "containers" {
 
   validation {
     condition = alltrue([
-      for key, container in var.containers :
+      for key, container in var.container :
       alltrue([
         for mount in try(container.mounts, []) :
-        can(regex("^/.*", mount.host_path))
+        mount.host_path == null || can(regex("^/.*", mount.host_path))
       ])
     ])
     error_message = "Host paths must be absolute paths starting with '/'."
@@ -135,10 +135,10 @@ variable "containers" {
 
   validation {
     condition = alltrue([
-      for key, container in var.containers :
+      for key, container in var.container :
       alltrue([
         for mount in try(container.mounts, []) :
-        contains(["ro", "rw"], mount.mode)
+        mount.mode == null || contains(["ro", "rw"], mount.mode)
       ])
     ])
     error_message = "Mount modes must be either 'ro' (read-only) or 'rw' (read-write)."
