@@ -62,6 +62,7 @@ variable "containers" {
     })), [])
 
     template_data = object({
+      enable       = optional(bool, true)
       shell        = string
       repository   = string
       support      = string

@@ -105,6 +105,7 @@ locals {
 }
 
 resource "null_resource" "docker_unraid_xml" {
+  count = var.enable == true ? 1 : 0
   triggers = {
     content = templatefile("${path.module}/template.xml.tpl", local.template_data)
   }

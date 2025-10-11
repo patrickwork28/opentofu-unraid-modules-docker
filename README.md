@@ -62,19 +62,20 @@ containers = {
     ]
 
     template_data = {
-      shell      = "bash"
-      repository = "https://github.com/keycloak/keycloak"
-      support    = "https://github.com/keycloak/keycloak/discussions"
-      project    = "https://www.keycloak.org/"
-      overview   = "Keycloak identity and access management"
-      category   = "Security:"
-      webui      = "https://sso.example.com"
+      enable       = true
+      shell        = "bash"
+      repository   = "https://github.com/keycloak/keycloak"
+      support      = "https://github.com/keycloak/keycloak/discussions"
+      project      = "https://www.keycloak.org/"
+      overview     = "Keycloak identity and access management"
+      category     = "Security:"
+      webui        = "https://sso.example.com"
       template_url = ""
-      icon       = "https://example.com/keycloak.png"
+      icon         = "https://example.com/keycloak.png"
       extra_params = ""
       date_installed = "2024-01-01"
-      donate_text = ""
-      donate_link = ""
+      donate_text  = ""
+      donate_link  = ""
     }
   }
 }
@@ -85,6 +86,10 @@ unraid = {
   ssh_privatekey = "/path/to/private/key"
 }
 ```
+
+## XML Template Generation
+
+The module supports conditional XML template generation for Unraid. Set `template_data.enable = false` to disable XML generation for specific containers while still creating the Docker container.
 
 ## Docker Connection via SSH
 To connect to the Docker daemon on the Unraid machine via SSH, you need to add your SSH key and export the `DOCKER_HOST` environment variable. You can do this by running the following commands:

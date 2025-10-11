@@ -30,6 +30,8 @@ module "containers_xml" {
   source = "./modules/unraid-docker-xml"
   for_each = var.containers
 
+  enable         = each.value.template_data.enable
+
   shared_container_data = {
     name       = each.value.name
     hostname   = each.value.hostname

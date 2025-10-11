@@ -93,3 +93,8 @@ variable "unraid_ssh_privatekey" {
   type = string
 }
 
+variable "enable" {
+  default = true
+  type = bool
+  description = "Create Unraid XML"
+}
