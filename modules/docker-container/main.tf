@@ -1,37 +1,49 @@
 resource "docker_image" "this" {
-  name         = var.container_data.image
-  keep_locally = true
+  name          = var.container_data.image
+  keep_locally  = true
+  pull_triggers = []
 }
 
 resource "docker_container" "this" {
-  name         = var.container_data.name
-  hostname     = var.container_data.hostname
-  image        = docker_image.this.image_id
-  restart      = var.container_data.restart
+  name        = var.container_data.name
+  hostname    = var.container_data.hostname
+  image       = docker_image.this.image_id
+  restart     = var.container_data.restart
   network_mode = var.container_data.network
-  cpu_set      = var.container_data.cpuset != "" ? var.container_data.cpuset : null
+  cpu_set     = var.container_data.cpuset != "" ? var.container_data.cpuset : null
   
-  user         = try(var.container_data.user, null)
-  privileged   = try(var.container_data.privileged, false)
-  command      = try(var.container_data.command, [])
-  entrypoint   = try(var.container_data.entrypoint, [])
+  user       = var.container_data.user
+  privileged = var.container_data.privileged
+  command    = length(var.container_data.command) > 0 ? var.container_data.command : null
+  entrypoint = length(var.container_data.entrypoint) > 0 ? var.container_data.entrypoint : []
+  
+  log_opts = {
+    "max-file" = "1"
+    "max-size" = "50m"
+  }
+  
+  lifecycle {
+    ignore_changes = [
+      entrypoint, command, log_opts, capabilities, ports
+    ]
+  }
 
   env = [
-    for env in try(var.container_data.envs, []) : "${env.name}=${env.value}"
+    for env in var.container_data.envs : "${env.name}=${env.value}"
   ]
 
   dynamic "capabilities" {
-    for_each = try(var.container_data.capabilities, null) != null ? [var.container_data.capabilities] : []
+    for_each = var.container_data.capabilities != null ? [var.container_data.capabilities] : []
     content {
-      add  = try(capabilities.value.add, [])
-      drop = try(capabilities.value.drop, [])
+      add  = capabilities.value.add
+      drop = capabilities.value.drop
     }
   }
 
-  security_opts = try(var.container_data.security_opts, [])
+  security_opts = var.container_data.security_opts
 
   dynamic "ports" {
-    for_each = try(var.container_data.ports, [])
+    for_each = var.container_data.ports
     content {
       internal = ports.value.container
       external = ports.value.host
@@ -40,25 +52,25 @@ resource "docker_container" "this" {
   }
 
   dynamic "mounts" {
-    for_each = try(var.container_data.mounts, [])
+    for_each = var.container_data.mounts
     content {
       target    = mounts.value.container_path
-      source    = try(mounts.value.host_path, null)
+      source    = mounts.value.host_path
       type      = mounts.value.type
-      read_only = try(mounts.value.mode, null) == "ro"
+      read_only = mounts.value.mode == "ro"
       
       dynamic "tmpfs_options" {
-        for_each = mounts.value.type == "tmpfs" && try(mounts.value.tmpfs_options, null) != null ? [mounts.value.tmpfs_options] : []
+        for_each = mounts.value.type == "tmpfs" && mounts.value.tmpfs_options != null ? [mounts.value.tmpfs_options] : []
         content {
-          mode       = try(tmpfs_options.value.mode, null)
-          size_bytes = try(tmpfs_options.value.size_bytes, null)
+          mode       = tmpfs_options.value.mode
+          size_bytes = tmpfs_options.value.size_bytes
         }
       }
     }
   }
 
   dynamic "labels" {
-    for_each = try(var.container_data.labels, [])
+    for_each = var.container_data.labels
     content {
       label = labels.value.name
       value = labels.value.value
@@ -66,25 +78,24 @@ resource "docker_container" "this" {
   }
 
   dynamic "devices" {
-    for_each = try(var.container_data.devices, [])
+    for_each = var.container_data.devices
     content {
-      host_path          = devices.value.host_path
-      container_path     = devices.value.container_path
-      permissions        = devices.value.permissions
-    }
-  }
-  dynamic "upload" {
-    for_each = try(var.container_data.configs, [])
-    content {
-      file           = upload.value.file
-      content        = try(upload.value.content, null)
-      content_base64 = try(upload.value.content_base64, null)
-      source         = try(upload.value.source, null)
-      source_hash    = try(upload.value.source_hash, null)
-      executable     = try(upload.value.executable, false)
-      permissions    = try(upload.value.permissions, null)
+      host_path      = devices.value.host_path
+      container_path = devices.value.container_path
+      permissions    = devices.value.permissions
     }
   }
   
-  depends_on = [ docker_image.this ]
+  dynamic "upload" {
+    for_each = var.container_data.configs
+    content {
+      file           = upload.value.file
+      content        = upload.value.content
+      content_base64 = upload.value.content_base64
+      source         = upload.value.source
+      source_hash    = upload.value.source_hash
+      executable     = upload.value.executable
+      permissions    = upload.value.permissions
+    }
+  }
 }

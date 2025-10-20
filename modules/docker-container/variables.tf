@@ -1,14 +1,14 @@
 variable "container_data" {
-  description = "Complete container configuration object including runtime settings, networking, volumes, and environment variables"
+  description = "Single container configuration"
   type = object({
     name       = string
     hostname   = string
     image      = string
     network    = string
     restart    = string
-    pids_limit = number
-    cpuset = optional(string, "")
-    user = optional(string)
+    pids_limit = optional(number, 1024)
+    cpuset     = optional(string, "")
+    user       = optional(string)
     privileged = optional(bool, false)
     command    = optional(list(string), [])
     entrypoint = optional(list(string), [])
@@ -21,7 +21,7 @@ variable "container_data" {
     capabilities = optional(object({
       add  = optional(list(string), [])
       drop = optional(list(string), [])
-    }), { add = [], drop = [] })
+    }))
 
     security_opts = optional(list(string), [])
     
@@ -62,6 +62,8 @@ variable "container_data" {
       container_path = string
       permissions    = string
     })), [])
+    
+    ignore_changes = optional(list(string), [])
   })
 
   validation {
@@ -75,7 +77,7 @@ variable "container_data" {
   }
 
   validation {
-    condition     = var.container_data.pids_limit > 0
-    error_message = "PIDs limit must be greater than 0."
+    condition     = try(var.container_data.pids_limit > 0, true)
+    error_message = "When specified, PIDs limit must be greater than 0."
   }
 }

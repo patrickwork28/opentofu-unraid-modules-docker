@@ -2,28 +2,7 @@ module "containers" {
   source = "./modules/docker-container"
   for_each = var.containers
   
-  container_data = {
-    name       = each.value.name
-    hostname   = each.value.hostname
-    image      = each.value.image
-    network    = each.value.network
-    restart    = each.value.restart
-    pids_limit = each.value.pids_limit
-    cpuset     = try(each.value.template_data.cpuset, "")
-
-    user         = try(each.value.user, null)
-    privileged   = each.value.privileged
-    command      = try(each.value.command, [])
-    entrypoint   = try(each.value.entrypoint, [])
-    envs         = try(each.value.envs, [])
-    capabilities = try(each.value.capabilities, null)
-    security_opts = try(each.value.security_opts, [])
-    ports        = try(each.value.ports, [])
-    mounts       = try(each.value.mounts, [])
-    configs      = try(each.value.configs, [])
-    labels       = try(each.value.labels, [])
-    devices      = try(each.value.devices, [])
-  }
+  container_data = each.value
 }
 
 module "containers_xml" {
