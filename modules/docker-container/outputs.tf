@@ -1,11 +1,15 @@
+locals {
+  container = length(var.container_data.ignore_changes) > 0 ? docker_container.ignore[0] : docker_container.this[0]
+}
+
 output "container_id" {
   description = "The ID of the created Docker container"
-  value       = docker_container.this.id
+  value       = local.container.id
 }
 
 output "container_name" {
   description = "The name of the created Docker container"
-  value       = docker_container.this.name
+  value       = local.container.name
 }
 
 output "image_name" {
@@ -15,10 +19,10 @@ output "image_name" {
 
 output "container_ip" {
   description = "The IP address of the Docker container"
-  value = try(docker_container.this.network_data[0].ip_address, "")
+  value = try(local.container.network_data[0].ip_address, "")
 }
 
 output "container_network_mode" {
   description = "The network mode of the Docker container"
-  value       = docker_container.this.network_mode
+  value       = local.container.network_mode
 }
