@@ -5,7 +5,7 @@ variable "containers" {
     image      = string
     network    = string
     restart    = string
-    pids_limit = number
+    cpuset     = optional(string, "")
     user       = optional(string)
     privileged = optional(bool, false)
     command    = optional(list(string), [])

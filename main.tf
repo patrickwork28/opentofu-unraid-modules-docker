@@ -1,18 +1,20 @@
 module "containers" {
   source = "./modules/docker-container"
+
   for_each = var.containers
-  
+
   container_data = each.value
 }
 
 module "containers_xml" {
   source = "./modules/unraid-docker-xml"
+
   for_each = {
     for key, container in var.containers : key => container
     if try(container.template_data.enable, false) == true
   }
 
-  enable         = each.value.template_data.enable
+  enable = each.value.template_data.enable
 
   shared_container_data = {
     name       = each.value.name
@@ -21,7 +23,7 @@ module "containers_xml" {
     network    = each.value.network
     privileged = each.value.privileged
     restart    = each.value.restart
-  
+
     user       = try(each.value.user, null)
     command    = try(each.value.command, [])
     entrypoint = try(each.value.entrypoint, [])
@@ -52,8 +54,9 @@ module "containers_xml" {
     donate_link    = each.value.template_data.donate_link
     myip           = try(each.value.template_data.myip, "")
   }
+
   unraid_xml_folderpath = var.unraid.xml_folderpath
-  unraid_host          = var.unraid.host
-  unraid_user          = var.unraid.user
+  unraid_host           = var.unraid.host
+  unraid_user           = var.unraid.user
   unraid_ssh_privatekey = var.unraid.ssh_privatekey
 }
