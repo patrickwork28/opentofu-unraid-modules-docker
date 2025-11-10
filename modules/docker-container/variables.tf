@@ -6,7 +6,6 @@ variable "container_data" {
     image      = string
     network    = string
     restart    = string
-    pids_limit = optional(number, 1024)
     cpuset     = optional(string, "")
     user       = optional(string)
     privileged = optional(bool, false)
@@ -62,8 +61,6 @@ variable "container_data" {
       container_path = string
       permissions    = string
     })), [])
-    
-    ignore_changes = optional(list(string), [])
   })
 
   validation {
@@ -76,8 +73,5 @@ variable "container_data" {
     error_message = "Restart policy must be one of: no, on-failure, always, unless-stopped."
   }
 
-  validation {
-    condition     = try(var.container_data.pids_limit > 0, true)
-    error_message = "When specified, PIDs limit must be greater than 0."
-  }
+
 }
