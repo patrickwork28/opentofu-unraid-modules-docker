@@ -39,3 +39,5 @@ terraform.rc
 
 # Ignore Roo configuration
 .roo/
+
+configs/
